@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          如何在 Visual Studio Team Service 設定自動建置及佈署 - Ryan | 不務正業 全端 開發記事
+        
+    </title>
+
+    <link rel="canonical" href="http://blog.ryantseng.me/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <link rel="stylesheet" href="/css/lightbox.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    
+<!-- Google Analytics -->
+
+    
+    
+        <!-- Global Site Tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107688240-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        gtag('config', 'UA-107688240-1');
+        </script>
+    
+    
+    
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/home-bg-2-dark.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#VSTS" title="VSTS">VSTS</a>
+                            
+                        </div>
+                        <h1>如何在 Visual Studio Team Service 設定自動建置及佈署</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Ryan Tseng on
+                            2017-10-04
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Ryan</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="前言">前言</h2>
+<p>還記得以前在進行專案的時候，開發到一個段落客戶會要求看目前開發的狀況，我們通常都會手動的去做建置以及佈署的動作，這樣的動作對各位來說一天做個三次五次還可以，不過只要你一天需要做個二十幾次，你可能就會覺得很浪費時間。</p>
+<p>今天這篇的主題就是帶著大家怎麼樣透過 Visual Studio Team Service (aka VSTS) 來幫助我們做到自動建置以及自動部署，讓各位的生命浪費在美好的事物上(Coding)。</p>
+<h2 id="前置準備">前置準備</h2>
+<p>一開始我們必須先建立一個空白的 <code>Git</code> 倉儲。</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/1_CreateGitRepositoryOnVSTS.png">
+<p>建立成功之後將空白的 <a href="http://ASP.NET" target="_blank" rel="noopener">ASP.NET</a> MVC 專案推送至剛剛建立好的倉儲</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/2_EnterEmptyGitRepoPage.png">
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/3_AddRemoteRepo.png">
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/4_PushToRemoteGitRepository.png">
+<p>最後檢查一下 Code 頁籤中，程式碼已成功被 Push 至遠端倉儲</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/5_CheckTheDemoProjectExists.png">
+<h2 id="建置-build">建置 (Build)</h2>
+<p>我們先建立一個 Build Definition 定義檔</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/6_ClickNewBuildDefinitionButton.png">
+<p>選用空白的樣板(也可以選擇現有的 <a href="http://ASP.NET" target="_blank" rel="noopener">ASP.NET</a> 樣板，這邊因為要測試所以使用空白範本)</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/7_ApplyEmptyTemplate.png">
+<p>在目前版本的 VSTS 設定上面，我們可以點選 Phase 右方的 <code>+</code> 號，並且依照步驟在右方能夠選擇想加入的工作項目，按下 <code>Add</code> 該工作項目就能夠加入至左方的 Phase 中</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/9_SelectTask.png">
+<p>先來看一下我們建置所安排的幾個工作項目</p>
+<ol>
+<li>套件還原</li>
+<li>建置</li>
+<li>執行單元測試</li>
+<li>打包檔案並上傳至 VSTS</li>
+</ol>
+<p>對應的步驟就如下圖所示</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/8_BuildTasks.png">
+<p>接下來會稍微解釋一下建置裡面的 MSBuild Arguments</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/10_BuildSetting.png">
+<p>以下這邊是與圖片內完全相同的參數，各位可以直接參考(如果各位是選用內建的 <a href="http://ASP.NET" target="_blank" rel="noopener">ASP.NET</a> Template，這些參數應該已經內建在上面了)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation=&quot;$(build.artifactstagingdirectory)\\&quot;</span><br></pre></td></tr></table></figure>
+<p>要注意 <code>$(...)</code> 這種形式的字串，它其實是一個預先設定好的變數，表示 Task 在執行的時候，它會被取代為原本它代表的字串，而 <code>$(build.artifactstagingdirectory)</code> 在微軟提供的文件其代表的涵義如下</p>
+<blockquote>
+<p>The local path on the agent where any artifacts are copied to before being pushed to their destination. For example: c:\agent_work\1\a</p>
+</blockquote>
+<p>這邊額外提供微軟的 Build Variables 文件給大家參考</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/vsts/build-release/concepts/definitions/build/variables?tabs=batch" target="_blank" rel="noopener">Build Variables</a></li>
+</ul>
+<p>另外，因為我們在這個範例中是透過 VSTS 來幫我們進行佈署，所以我們需要將這個檔案透過 Publish Artifact 這個工作項目，來幫我們把檔案上傳至 VSTS，讓他能夠被後續的 Release 流程給取得。</p>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/11_PublishArtifactsToDropFolder.png">
+<ul>
+<li>
+<p>Path to Publish (我們要將什麼資料夾整個上傳至 VSTS)</p>
+<ul>
+<li><code>$(build.artifactstagingdirectory)\\</code></li>
+</ul>
+</li>
+<li>
+<p>Artifact Name (要將建置並包裝完成的 Artifact 發布到什麼資料夾底下)</p>
+<ul>
+<li><code>drop</code></li>
+</ul>
+</li>
+<li>
+<p>整個設定完成之後我們可以點選右上角的 <code>Save &amp; queue</code> 來實際執行我們安排好的建置工作項目</p>
+</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/12_PressSaveAndQueueButton.png">
+<ul>
+<li>點選 <code>Save</code> 之後會跳出視窗，可以讓我們選擇想要使用的 Agent (VSTS 預設都是使用雲端的 Agent，如果讀者想了解如何使用非雲端的 Agent 可以參考 <a href="https://docs.microsoft.com/en-us/vsts/build-release/concepts/agents/agents" target="_blank" rel="noopener">這裡</a>)，我們就直接點選一次 <code>Queue</code> 嘗試著先手動執行我們的建置步驟。</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/13_QueueAndShowModal.png">
+<ul>
+<li>排入佇列之後我們可以直接點選它的提示訊息進入到執行中的項目</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/14_AfterQueueABuild.png">
+<ul>
+<li>在裡面可以看到自己安排的建置流程當中，目前執行的狀況如何，也能夠從這裡看到很完整即時的資訊。</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/15_RunningABuild.png">
+<ul>
+<li>確保建置流程都能夠順利結束之後我們需要有一個 Trigger 能夠讓我們在程式碼 Push 至遠端 Git 的時候，能夠觸發整個建置的動作(這邊可以依照自己團隊建立分支的狀況進行調整，以下圖片僅展示在 master 分支有新的 push 推送時，能夠觸發建置的動作)</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/16_SettingUpTrigger.png">
+<ul>
+<li>接下來我們就能夠在分支有專案成員 push 到遠端的時候觸發自動建置，前半段算是告一段落</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/17_TriggerByPushing.png">
+<h2 id="佈署-release">佈署 (Release)</h2>
+<p>在我們的專案能夠透過版本控制的更動自動觸發建置之後，接下來就要繼續進行佈署的設定</p>
+<ul>
+<li>首先依照步驟點選至 Release 頁籤，並且新增一個 Release Definition</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/18_ClickReleaseDefinitionButton.png">
+<ul>
+<li>這次和建置相同，選擇空白的樣板</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/19_UseEmptyTemplate.png">
+<ul>
+<li>選擇完樣板之後會出現如下畫面，我們要選擇從哪裡取得要佈署的 Package</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/20_SelectArtifact.png">
+<ul>
+<li>再來設定要怎麼觸發 Release 這個動作</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/32_SettingUpTrigger.png">
+<ul>
+<li>接下來設定佈署的工作流程</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/21_ClickHyperLinkInEvnOne.png">
+<ul>
+<li>進入到工作流程之後，我們選用 Command Line 工具並加入 Phase 當中</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/22_SelectCommandLineTool.png">
+<ul>
+<li>接下來在 Command Line 的設定項目中，我們要先選擇預設的工作目錄(可直接定位至 drop 資料夾，就不用自行透過指令切換好幾層的目錄)</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/23_SelectWorkingFolder.png">
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/24_SelectDropFolderAsWorkingFolder.png">
+<ul>
+<li>這邊需特別講解，在建置步驟時產出在 drop 資料夾中的檔案，其中包含一個 <code>*.cmd</code> 的檔案，其實這個檔案是一個批次檔，內部它會自行呼叫 MsDeploy.exe 幫助我們完成佈署，但它還是需要下一些參數，如下圖</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/25_UseRyanDemo1001DeployCmdAndFillArguments.png">
+<p>實際參數詳列如下</p>
+<ul>
+<li>Tool</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RyanDemo1001.deploy.cmd</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Arguments</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/y &quot;/m:https://[站台網址]:443/MsDeploy.axd?Site=[站台名稱]&quot; -allowUntrusted /u:&quot;[佈署帳號]&quot; /p:&quot;$(DeployPassword)&quot; /a:Basic &quot;-enableRule:DoNotDeleteRule -setParam:name=&apos;IIS Web Application Name&apos;,value=&apos;[站台名稱]&apos;&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>上方使用中括號所包起來的參數，皆可以透過佈署設定檔案取得。</strong></p>
+<ul>
+<li>最後我們要將上方的 <code>$(DeployPassword)</code> 變數，設定到我們的變數區，這樣就不會直接寫在佈署的參數當中，增加一點安全性。</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/29_AddVariables.png">
+<ul>
+<li>添加完成之後，這個變數會在執行工作流程時被取代掉，接下來我們就試跑一次整個佈署的工作流程是否能夠正常執行</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/30_ReleaseSuccess.png">
+<ul>
+<li>最後檢查我們的站台是否已經正常被佈署至 Azure 的 <code>App Service</code> 當中</li>
+</ul>
+<img src="/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/31_CheckWebSiteIsDeploy.png">
+<p>大家自行嘗試的時候請在最後自己嘗試修改一點程式碼，然後推送到 Repository 上面，讓它引發建置及佈署的流程，看看是否整個建置及佈署的流程都已經成功的自動化了呢？往後各位只需要將注意力集中在撰寫程式上面即可，在前面花時間摸索的設定，在未來將會替各位或是團隊節省不少的手動作業時間。</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/10/05/S-O-L-I-D-物件導向設計原則-SRP-Single-Responsibility-Principle/" data-toggle="tooltip" data-placement="top" title="S.O.L.I.D 物件導向設計原則 - SRP (Single Responsibility Principle)">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/09/22/控制反轉-IoC-相依性注入-DI/" data-toggle="tooltip" data-placement="top" title="控制反轉(IoC) & 相依性注入(DI)">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前置準備"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">前置準備</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建置-build"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">建置 (Build)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#佈署-release"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">佈署 (Release)</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#VSTS" title="VSTS">VSTS</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.kevinyang.net/" target="_blank">CK&#39;s Notepad</a></li>
+                    
+                        <li><a href="http://blog.miniasp.com/" target="_blank">The Will Will Web | Will 保哥</a></li>
+                    
+                        <li><a href="https://blog.alantsai.net/" target="_blank">Alan Tsai 的學習筆記</a></li>
+                    
+                        <li><a href="http://blog.kkbruce.net/" target="_blank">KKBruce</a></li>
+                    
+                        <li><a href="https://www.dotblogs.com.tw/hatelove/" target="_blank">In 91</a></li>
+                    
+                        <li><a href="http://skychang.github.io/" target="_blank">天空的垃圾場</a></li>
+                    
+                        <li><a href="https://08alan.github.io/" target="_blank">Alan 維持熱情不滅</a></li>
+                    
+                        <li><a href="http://huan-lin.blogspot.com/" target="_blank">Huan-Lin 學習筆記</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/TomXu/" target="_blank">湯姆大叔</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "ryanblogger";
+    var disqus_identifier = "http://blog.ryantseng.me/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/";
+    var disqus_url = "http://blog.ryantseng.me/2017/10/04/如何在-Visual-Studio-Team-Service-設定自動建置及佈署/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+                    
+
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/ryan-tseng-2b977953">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy;
+                    Ryan Tseng
+                    2019
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a>
+                    <!-- | <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<script>
+    $(function () {
+        $('article img').each(function (index, ele) {
+            var element = $(ele);
+            var src = element.attr('src');
+            element.wrap('<a href="' + src + '" data-lightbox="lightbox-imgs"></a>');
+        });
+    });
+</script>
+<script src="/js/lightbox.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async (u, c) {
+        var d = document,
+            t = 'script',
+            o = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        o.src = u;
+        if (c) {
+            o.addEventListener('load', function (e) {
+                c(null, e);
+            }, false);
+        }
+        s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+        async ("http://blog.ryantseng.me/js/jquery.tagcloud.js", function () {
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {
+                    start: '#bbbbee',
+                    end: '#0085a1'
+                },
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async ("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function () {
+        var $nav = document.querySelector("nav");
+        if ($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://blog.ryantseng.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

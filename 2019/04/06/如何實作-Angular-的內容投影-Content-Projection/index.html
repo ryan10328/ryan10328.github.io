@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          如何實作 Angular 的內容投影 - Content Projection - Ryan | 不務正業 全端 開發記事
+        
+    </title>
+
+    <link rel="canonical" href="http://blog.ryantseng.me/2019/04/06/如何實作-Angular-的內容投影-Content-Projection/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <link rel="stylesheet" href="/css/lightbox.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    
+<!-- Google Analytics -->
+
+    
+    
+        <!-- Global Site Tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107688240-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        gtag('config', 'UA-107688240-1');
+        </script>
+    
+    
+    
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/home-bg-2-dark.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Angular" title="Angular">Angular</a>
+                            
+                        </div>
+                        <h1>如何實作 Angular 的內容投影 - Content Projection</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Ryan Tseng on
+                            2019-04-06
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Ryan</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="緣起">緣起</h2>
+<p>今天會講這個主題，主要是之前看到很多框架的元件裡面都會有這樣的做法</p>
+<p>以下範例取自 ngx-admin 的 nebular 專案，有興趣的讀者可以去看一下它的專案</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nb-tabset</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #1"</span>&gt;</span></span><br><span class="line">        Tab content 1</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #2"</span>&gt;</span></span><br><span class="line">        Tab content 2</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nb-tabset</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那實際上這是怎麼樣達成的呢？</p>
+<p>我們先從裡面看到外面，因為這個元件同時用到了 <code>單一內容投影</code>, <code>多筆內容投影</code></p>
+<p>裡面因為稍微單純一點就從裡面開始說！</p>
+<h3 id="nbtabcomponent">NbTabComponent</h3>
+<p>通常看到這種形式，就是你自訂的元件中間包著其他內容，我們就可以猜到他有用到內容投影的技巧，簡單來說你自定的元件標籤中所包起來的那一塊，都會被投影到實際 nb-tab 的元件裡。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nb-tabset</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #1"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 投影的內容區塊 start --&gt;</span></span><br><span class="line">        Tab content 1</span><br><span class="line">        <span class="comment">&lt;!-- 投影的內容區塊 end --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #2"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 投影的內容區塊 start --&gt;</span></span><br><span class="line">        Tab content 2</span><br><span class="line">        <span class="comment">&lt;!-- 投影的內容區塊 end --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nb-tabset</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>整塊的 p 標籤會被投到我下面標示的 ng-content 標籤 (ng-content 整個會被取代掉)</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'nb-tab'</span>,</span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;ng-container *ngIf="init"&gt;</span></span><br><span class="line"><span class="string">      &lt;!-- 投影的內容區塊 --&gt;</span></span><br><span class="line"><span class="string">          &lt;ng-content&gt;&lt;/ng-content&gt;</span></span><br><span class="line"><span class="string">      &lt;!-- 投影的內容區塊 --&gt;</span></span><br><span class="line"><span class="string">    &lt;/ng-container&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> NbTabComponent &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="nbtabsetcomponent">NbTabsetComponent</h3>
+<p>有了上面的概念之後你就知道， nb-tabset 元件裡面包的內容都會投影到</p>
+<p><code>&lt;ng-content select=&quot;nb-tab&quot;&gt;&lt;/ng-content&gt;</code></p>
+<p>這個區塊，唯一不一樣的是，他算是 <strong>多筆</strong> 的內容投影</p>
+<p>所以你會看到 <code>select=&quot;ng-tab&quot;</code> 這種特殊的寫法</p>
+<p>那是因為他要精確的告訴元件，我要投影的是哪個標籤 or 元素</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">nb-tabset</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 投影的區塊 start --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #1"</span>&gt;</span></span><br><span class="line">        Tab content 1</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">nb-tab</span> <span class="attr">tabTitle</span>=<span class="string">"Simple Tab #2"</span>&gt;</span></span><br><span class="line">        Tab content 2</span><br><span class="line">    <span class="tag">&lt;/<span class="name">nb-tab</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 投影的區塊 end --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">nb-tabset</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(&#123;</span><br><span class="line">  selector: <span class="string">'nb-tabset'</span>,</span><br><span class="line">  styleUrls: [<span class="string">'./tabset.component.scss'</span>],</span><br><span class="line">  template: <span class="string">`</span></span><br><span class="line"><span class="string">    &lt;ul class="tabset"&gt;</span></span><br><span class="line"><span class="string">      &lt;li *ngFor="let tab of tabs"</span></span><br><span class="line"><span class="string">          (click)="selectTab(tab)"</span></span><br><span class="line"><span class="string">          [class.responsive]="tab.responsive"</span></span><br><span class="line"><span class="string">          [class.active]="tab.active"</span></span><br><span class="line"><span class="string">          [class.disabled]="tab.disabled"</span></span><br><span class="line"><span class="string">          [attr.tabindex]="tab.disabled ? -1 : 0"</span></span><br><span class="line"><span class="string">          class="tab"&gt;</span></span><br><span class="line"><span class="string">        &lt;a href (click)="$event.preventDefault()" tabindex="-1"&gt;</span></span><br><span class="line"><span class="string">          &lt;i *ngIf="tab.tabIcon" [class]="tab.tabIcon"&gt;&lt;/i&gt;</span></span><br><span class="line"><span class="string">          &lt;span *ngIf="tab.tabTitle"&gt;&#123;&#123; tab.tabTitle &#125;&#125;&lt;/span&gt;</span></span><br><span class="line"><span class="string">        &lt;/a&gt;</span></span><br><span class="line"><span class="string">        &lt;nb-badge *ngIf="tab.badgeText"</span></span><br><span class="line"><span class="string">          [text]="tab.badgeText"</span></span><br><span class="line"><span class="string">          [status]="tab.badgeStatus"</span></span><br><span class="line"><span class="string">          [position]="tab.badgePosition"&gt;</span></span><br><span class="line"><span class="string">        &lt;/nb-badge&gt;</span></span><br><span class="line"><span class="string">      &lt;/li&gt;</span></span><br><span class="line"><span class="string">    &lt;/ul&gt;</span></span><br><span class="line"><span class="string">    &lt;!-- 這個區塊就是要投影所挖的洞 --&gt;</span></span><br><span class="line"><span class="string">    &lt;ng-content select="nb-tab"&gt;&lt;/ng-content&gt;</span></span><br><span class="line"><span class="string">  `</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> NbTabsetComponent <span class="keyword">implements</span> AfterContentInit &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="實例展示">實例展示</h2>
+<p>看完了 Angular 的 Content Projection 實際用 stackblitz 練習一下，各位可以點過去玩一下</p>
+<iframe src="https://stackblitz.com/edit/ryan-ng-content-projection?embed=1&file=src/app/content-projection-demo/content-projection-demo.component.html" height="480" width="640">
+</iframe>
+<h2 id="參考資料">參考資料</h2>
+<ul>
+<li><a href="https://codecraft.tv/courses/angular/components/content-projection/" target="_blank" rel="noopener">Code Craft - Content Projection</a></li>
+<li><a href="https://stackblitz.com/edit/ryan-ng-content-projection" target="_blank" rel="noopener">StackBlitz - Content Projection Sample</a></li>
+</ul>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/06/09/如何在本機端的開發環境建立-net-core-SSL-開發憑證/" data-toggle="tooltip" data-placement="top" title="如何在本機端的開發環境建立 .net core SSL 開發憑證">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/12/30/如何透過-Angular-CLI-製作自己的-Library/" data-toggle="tooltip" data-placement="top" title="如何透過 Angular CLI 製作自己的 Library">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#緣起"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">緣起</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#nbtabcomponent"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">NbTabComponent</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#nbtabsetcomponent"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">NbTabsetComponent</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#實例展示"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">實例展示</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#參考資料"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">參考資料</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Angular" title="Angular">Angular</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.kevinyang.net/" target="_blank">CK&#39;s Notepad</a></li>
+                    
+                        <li><a href="http://blog.miniasp.com/" target="_blank">The Will Will Web | Will 保哥</a></li>
+                    
+                        <li><a href="https://blog.alantsai.net/" target="_blank">Alan Tsai 的學習筆記</a></li>
+                    
+                        <li><a href="http://blog.kkbruce.net/" target="_blank">KKBruce</a></li>
+                    
+                        <li><a href="https://www.dotblogs.com.tw/hatelove/" target="_blank">In 91</a></li>
+                    
+                        <li><a href="http://skychang.github.io/" target="_blank">天空的垃圾場</a></li>
+                    
+                        <li><a href="https://08alan.github.io/" target="_blank">Alan 維持熱情不滅</a></li>
+                    
+                        <li><a href="http://huan-lin.blogspot.com/" target="_blank">Huan-Lin 學習筆記</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/TomXu/" target="_blank">湯姆大叔</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "ryanblogger";
+    var disqus_identifier = "http://blog.ryantseng.me/2019/04/06/如何實作-Angular-的內容投影-Content-Projection/";
+    var disqus_url = "http://blog.ryantseng.me/2019/04/06/如何實作-Angular-的內容投影-Content-Projection/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+                    
+
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/ryan-tseng-2b977953">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy;
+                    Ryan Tseng
+                    2019
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a>
+                    <!-- | <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<script>
+    $(function () {
+        $('article img').each(function (index, ele) {
+            var element = $(ele);
+            var src = element.attr('src');
+            element.wrap('<a href="' + src + '" data-lightbox="lightbox-imgs"></a>');
+        });
+    });
+</script>
+<script src="/js/lightbox.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async (u, c) {
+        var d = document,
+            t = 'script',
+            o = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        o.src = u;
+        if (c) {
+            o.addEventListener('load', function (e) {
+                c(null, e);
+            }, false);
+        }
+        s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+        async ("http://blog.ryantseng.me/js/jquery.tagcloud.js", function () {
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {
+                    start: '#bbbbee',
+                    end: '#0085a1'
+                },
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async ("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function () {
+        var $nav = document.querySelector("nav");
+        if ($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://blog.ryantseng.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

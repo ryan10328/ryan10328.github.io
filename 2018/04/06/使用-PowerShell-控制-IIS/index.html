@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/ironman-draw.png">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          使用 PowerShell 控制 IIS - Ryan | 不務正業 全端 開發記事
+        
+    </title>
+
+    <link rel="canonical" href="http://blog.ryantseng.me/2018/04/06/使用-PowerShell-控制-IIS/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <link rel="stylesheet" href="/css/lightbox.min.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    
+<!-- Google Analytics -->
+
+    
+    
+        <!-- Global Site Tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107688240-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        gtag('config', 'UA-107688240-1');
+        </script>
+    
+    
+    
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/home-bg-2-dark.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#powershell" title="powershell">powershell</a>
+                            
+                        </div>
+                        <h1>使用 PowerShell 控制 IIS</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by Ryan Tseng on
+                            2018-04-06
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Ryan</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>以往在能夠碰到機器的情況底下(實體機器、虛擬機器…)，我們通常都會選擇使用 IIS 的管理介面來幫助我們設定 IIS 的組態</p>
+<p>由於最近在接觸 CI/CD，很多原本可以使用 UI 設定的組態都改用指令的方式來操作，讓我們在不透過任何人工的情況下，操作 IIS。</p>
+<p>今天就用簡單的例子來介紹，我們怎樣使用 <code>PowerShell</code> 來幫助我們做到以下的工作。</p>
+<ul>
+<li>取得目前所有的站台</li>
+<li>取得所有應用程式集區 (Application Pool)</li>
+<li>建立應用程式集區</li>
+<li>建立站台 (Website)
+<ul>
+<li>修改站台的實體路徑</li>
+<li>指定站台的應用程式集區</li>
+</ul>
+</li>
+<li>停止/啟動站台</li>
+</ul>
+<h2 id="選擇編輯器">選擇編輯器</h2>
+<p>要撰寫 <code>PowerShell</code> 有很多工具可以選擇，我這邊推薦兩個可以撰寫 <code>PowerShell</code> 的編輯器給大家參考</p>
+<ul>
+<li><code>Visual Studio Code</code></li>
+<li><code>PowerShell ISE</code></li>
+</ul>
+<h2 id="取得所有的站台">取得所有的站台</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 要記得 Import WebAdministration Module</span><br><span class="line">/&gt; Import-Module WebAdministration</span><br><span class="line">/&gt; Get-Website</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/pSV8IcQ.png" alt></p>
+<h2 id="取得所有的應用程式集區">取得所有的應用程式集區</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/&gt; Import-Module WebAdministration</span><br><span class="line">/&gt; Get-IISAppPool</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/2dQ0DK8.png" alt></p>
+<h2 id="建立應用程式集區">建立應用程式集區</h2>
+<p>建立一個名為 <code>DemoAppPool</code> 的應用程式集區</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/&gt; New-WebAppPool DemoAppPool | Set-ItemProperty -Name &quot;managedRuntimeVersion&quot; -Value &quot;v4.0&quot;</span><br></pre></td></tr></table></figure>
+<p>如果 <code>Set-ItemProperty -Name &quot;managedRuntimeVersion&quot; -Value &quot;&quot;</code> 這樣寫的話會是 <code>Non-Managed</code> 模式</p>
+<h2 id="建立站台">建立站台</h2>
+<p>建立一個名為 <code>DemoSite</code> 的站台，並且指定其實體路徑、應用程式集區</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/&gt; New-Website -Name &quot;DemoSite&quot; -Port 8080 -PhysicalPath &quot;E:\Documents&quot; -ApplicationPool &quot;DemoAppPool&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://i.imgur.com/W6c9LK1.png" alt></p>
+<h2 id="啟動停止站台">啟動/停止站台</h2>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/&gt; Stop-Website &quot;DemoSite&quot;</span><br><span class="line">/&gt; Start-Website &quot;DemoSite&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="實際操作">實際操作</h2>
+<blockquote>
+<p>將一包完整的站台佈署到連站台都還沒建立的 IIS</p>
+</blockquote>
+<p>這邊有一點要注意一下，執行 powershell 控制 IIS 會需要管理者的權限才行，如果你發現直接執行 script 產生錯誤的話，使用 administrator 權限再執行一次即可。</p>
+<ol>
+<li>準備一個還沒有建立好站台和應用程式集區的 IIS</li>
+</ol>
+<p><img src="https://i.imgur.com/bNW9rs9.png" alt></p>
+<ol start="2">
+<li>準備好一段 powrshell script</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Import-Module WebAdministration;</span><br><span class="line"></span><br><span class="line"># Create Folder if not exists</span><br><span class="line">if(!(Test-Path &quot;E:\Temp\&quot; -PathType Container)) &#123;</span><br><span class="line">    New-Item &quot;E:\Temp&quot; -ItemType Directory</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"># Copy deploy files into target folder</span><br><span class="line">Copy-Item &quot;.\PublishOutput\*&quot; -Destination &quot;E:\Temp\&quot; -Recurse -Force</span><br><span class="line"></span><br><span class="line"># Create Application Pool if not exists</span><br><span class="line">if(!(Test-Path &quot;IIS:\AppPools\DemoAppPool&quot; -PathType Container)) &#123;</span><br><span class="line">   Write-Host &quot;create app pool ...&quot; -ForegroundColor Yellow;</span><br><span class="line">   New-WebAppPool -Name &quot;DemoAppPool&quot; | Set-ItemProperty -Name &quot;managedRuntimeVersion&quot; -Value &quot;v4.0&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Create Website</span><br><span class="line">if(!(Test-Path &quot;IIS:\Websites\DemoWebsite&quot; -PathType Container)) &#123;</span><br><span class="line">   Write-Host &quot;create website ...&quot; -ForegroundColor Yellow;</span><br><span class="line">   New-Website -Name &quot;DemoWebsite&quot; -ApplicationPool &quot;DemoAppPool&quot; -PhysicalPath &quot;E:\Temp\&quot; -Port 8080;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>
+<p>執行它</p>
+</li>
+<li>
+<p>檢視結果</p>
+</li>
+</ol>
+<p>執行完 script 之後會發現應用程式集區以及站台都已經自動建立完成</p>
+<p><img src="https://i.imgur.com/Zn4d98U.png" alt></p>
+<p>打開瀏覽器看一下結果</p>
+<p><img src="https://i.imgur.com/i3dzSAw.png" alt></p>
+<h2 id="小結">小結</h2>
+<p>最近因為在公司撰寫的應用程式需要進行自動化的佈署，有幸讓同事抓去一起研究一下 CI/CD，之前都是使用現成的工具來做，但接觸了 powershell 之後，發現有很多系統的設定都可以使用它來幫我們達成，換言之，就算拿到一台空白完全沒有被碰過的伺服器你也可以撰寫一段 script 來建立所有的設定，相對於手動來說，會節省相當多的時間。</p>
+<p>我想有機會的話仍然會多去點一些 DevOps 的技能，相對於開發來說，也可以說是一個相當有趣的領域呢！</p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2018/04/08/S-O-L-I-D-物件導向設計原則-相依反轉原則-Dependency-Inversion-Principle/" data-toggle="tooltip" data-placement="top" title="S.O.L.I.D 物件導向設計原則 - 相依反轉原則 Dependency Inversion Principle">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/12/07/產生假資料的利器-ObjectFiller-NET/" data-toggle="tooltip" data-placement="top" title="產生假資料的利器 ObjectFiller.NET">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                    <div class="comment">
+                        <div id="disqus_thread" class="disqus-thread"></div>
+                    </div>
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#選擇編輯器"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">選擇編輯器</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#取得所有的站台"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">取得所有的站台</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#取得所有的應用程式集區"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">取得所有的應用程式集區</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立應用程式集區"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">建立應用程式集區</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建立站台"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">建立站台</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#啟動停止站台"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">啟動/停止站台</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#實際操作"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">實際操作</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#小結"><span class="toc-nav-number">8.</span> <span class="toc-nav-text">小結</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#powershell" title="powershell">powershell</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://blog.kevinyang.net/" target="_blank">CK&#39;s Notepad</a></li>
+                    
+                        <li><a href="http://blog.miniasp.com/" target="_blank">The Will Will Web | Will 保哥</a></li>
+                    
+                        <li><a href="https://blog.alantsai.net/" target="_blank">Alan Tsai 的學習筆記</a></li>
+                    
+                        <li><a href="http://blog.kkbruce.net/" target="_blank">KKBruce</a></li>
+                    
+                        <li><a href="https://www.dotblogs.com.tw/hatelove/" target="_blank">In 91</a></li>
+                    
+                        <li><a href="http://skychang.github.io/" target="_blank">天空的垃圾場</a></li>
+                    
+                        <li><a href="https://08alan.github.io/" target="_blank">Alan 維持熱情不滅</a></li>
+                    
+                        <li><a href="http://huan-lin.blogspot.com/" target="_blank">Huan-Lin 學習筆記</a></li>
+                    
+                        <li><a href="http://www.cnblogs.com/TomXu/" target="_blank">湯姆大叔</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus embedded js code start (one page only need to embed once) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "ryanblogger";
+    var disqus_identifier = "http://blog.ryantseng.me/2018/04/06/使用-PowerShell-控制-IIS/";
+    var disqus_url = "http://blog.ryantseng.me/2018/04/06/使用-PowerShell-控制-IIS/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus embedded js code start end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+                    
+
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ryan10328">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://www.linkedin.com/in/ryan-tseng-2b977953">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy;
+                    Ryan Tseng
+                    2019
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a>
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span>
+                    re-Ported by <a href="http://beantech.org">BeanTech</a>
+                    <!-- | <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<script>
+    $(function () {
+        $('article img').each(function (index, ele) {
+            var element = $(ele);
+            var src = element.attr('src');
+            element.wrap('<a href="' + src + '" data-lightbox="lightbox-imgs"></a>');
+        });
+    });
+</script>
+<script src="/js/lightbox.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async (u, c) {
+        var d = document,
+            t = 'script',
+            o = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        o.src = u;
+        if (c) {
+            o.addEventListener('load', function (e) {
+                c(null, e);
+            }, false);
+        }
+        s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+        async ("http://blog.ryantseng.me/js/jquery.tagcloud.js", function () {
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {
+                    start: '#bbbbee',
+                    end: '#0085a1'
+                },
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async ("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function () {
+        var $nav = document.querySelector("nav");
+        if ($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="http://blog.ryantseng.me/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>

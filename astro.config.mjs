@@ -15,7 +15,7 @@ export default defineConfig({
             defaultProps: {
                 showLineNumbers: true,
             },
-            themes: ["monokai"],
+            themes: ["github-dark"],
         }),
         mdx(),
         sitemap(),

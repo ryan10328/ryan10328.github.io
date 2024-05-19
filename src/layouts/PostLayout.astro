@@ -1,43 +1,68 @@
 ---
-import { type BlogSchema } from "../content/config";
+import {type BlogSchema} from "../content/config";
 import BaseLayout from "./BaseLayout.astro";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
-export interface Props extends BlogSchema {}
+export interface Props extends BlogSchema {
+}
 
-const { title, description, pubDate, updatedDate, heroImage, badge, tags = [] } = Astro.props;
+const {title, description, pubDate, updatedDate, heroImage, badge, tags = []} = Astro.props;
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll")
-import { Image } from "astro:assets";
+import {Image} from "astro:assets";
 ---
 
 <BaseLayout title={title} description={description} image={heroImage} ogType="article">
-  <main class="md:flex md:justify-center">
-    <article class="prose prose-lg max-w-[750px] prose-img:mx-auto">
-      {heroImage && <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6" />}
-      <h1 class="title my-2 text-4xl font-bold">{title}</h1>
-      {pubDate && <time>{displayDate}</time>}
-      <br />
-      {badge && <div class="badge badge-secondary my-1">{badge}</div>}
-      {
-        tags &&
-          tags.map((tag) => (
-            <a href={`/blog/tag/${tag}`} class="badge badge-accent ml-2 no-underline">
-              {tag}
-            </a>
-          ))
-      }
-      {
-        updatedDate && (
-          <div>
-            {" "}
-            Last updated on <time>{updatedDate}</time>{" "}
-          </div>
-        )
-      }
-      <div class="divider my-2"></div>
-      <slot />
-    </article>
-  </main>
+    <main class="md:flex md:justify-center">
+        <article class="prose prose-lg max-w-[850px] prose-img:mx-auto">
+            {heroImage &&
+                    <Image width={750} height={422} format="webp" src={heroImage} alt={title} class="w-full mb-6"/>}
+            <h1 class="title my-2 text-4xl font-bold">{title}</h1>
+            {pubDate &&
+                    <time>{displayDate}</time>}
+            <br/>
+            {badge &&
+                    <div class="badge badge-secondary my-2">{badge}</div>}
+            {
+                tags &&
+                tags.map((tag) => (
+                        <a href={`/blog/tag/${tag}`} class="badge badge-accent ml-2 no-underline">
+                            {tag}
+                        </a>
+                ))
+            }
+            {
+                updatedDate && (
+                            <div>
+                                {" "}
+                                Last updated on
+                                <time>{updatedDate}</time>
+                                {" "}
+                            </div>
+                )
+            }
+            <div class="divider my-2"></div>
+            <slot/>
+            <div class="divider my-2"></div>
+            <div class="p-2">
+                <script src="https://giscus.app/client.js"
+                        data-repo="ryan10328/blog-ryantseng-me-giscus"
+                        data-repo-id="R_kgDOL9q23A"
+                        data-category="Giscus"
+                        data-category-id="DIC_kwDOL9q23M4Cfd3v"
+                        data-mapping="pathname"
+                        data-strict="0"
+                        data-reactions-enabled="1"
+                        data-emit-metadata="0"
+                        data-input-position="top"
+                        data-theme="dark"
+                        data-lang="en"
+                        data-loading="lazy"
+                        crossorigin="anonymous"
+                        async>
+                </script>
+            </div>
+        </article>
+    </main>
 </BaseLayout>

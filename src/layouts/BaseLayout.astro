@@ -44,17 +44,19 @@ const {
 
 <script is:inline>
     (function () {
+        const themes = {dark: "business", light: "cupcake"};
+        const sysColor = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
         document.addEventListener("astro:page-load", () => {
-            const switcher = document.getElementById("theme-controller");
-            const theme = localStorage.getItem("theme");
-            if (theme === null) localStorage.setItem("theme", "business");
-            if (theme !== document.querySelector("html").getAttribute("data-theme")) {
-                document.querySelector("html").setAttribute("data-theme", theme);
-            }
-            if (theme === "cupcake") switcher.click();
-            switcher.addEventListener("change", (evt) => {
-                localStorage.setItem("theme", evt.target.checked ? "cupcake" : "business");
-                document.querySelector("html").setAttribute("data-theme", localStorage.getItem("theme"));
+            const controller = document.getElementById("theme-controller");
+            if (localStorage.getItem("theme") === null) localStorage.setItem("theme", sysColor);
+            document.querySelector("html").setAttribute("data-theme", themes[localStorage.getItem("theme")]);
+
+            if (localStorage.getItem("theme") === "light") controller.click();
+
+            controller.addEventListener("change", (e) => {
+                localStorage.setItem("theme", e.target.checked ? "light" : "dark");
+                document.querySelector("html").setAttribute("data-theme", themes[localStorage.getItem("theme")]);
             });
         });
     })();

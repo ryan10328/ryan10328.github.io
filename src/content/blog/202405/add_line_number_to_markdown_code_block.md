@@ -16,20 +16,21 @@ block 預設底下並沒有支援行號，因此本文將透過步驟、實際�
 
 首先安裝 `astro-expressive-code`
 
-```bash
+```bash title="Terminal"
 pnpm astro add astro-expressive-code
 
 ```
 
 再來安裝 `@expressive-code/plugin-line-numbers`
 
-```bash
+```bash title="Terminal"
 pnpm i @expressive-code/plugin
 ```
 
 接下來我們需要在 `astro.config.mjs` 當中加入相關設定
 
-```js
+```js {6-11}
+// astro.config.mjs
 export default defineConfig({
     // ignore...
     integrations: [

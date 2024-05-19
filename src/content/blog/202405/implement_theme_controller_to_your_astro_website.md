@@ -19,7 +19,8 @@ tags: [ "astro" ]
 這個 `data-theme` 可以設定預設套用的 theme 名稱，`DaisyUI`
 提供了很多樣化的主題可以讓使用者自行更改主題配色，以下列出 `DaisyUI` 支援的主題配色清單
 
-```js
+```js {6-37}
+// tailwind.config.js
 module.exports = {
     //...
     daisyui: {
@@ -64,7 +65,7 @@ module.exports = {
 接下來我們就要在畫面中加上 `Theme Controller` component，讓使用者有地方可以切換主題，我這邊選擇的是加入到 sidebar footer
 ，當然，也可以加在其他適合的區塊當中
 
-```html
+```html {3}
 <!-- SideBarFooter.astro -->
 <label class="swap swap-rotate mx-3">
     <input type="checkbox" id="theme-controller" class="theme-controller" value="cupcake"/>

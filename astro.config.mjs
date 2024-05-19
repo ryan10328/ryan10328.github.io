@@ -14,7 +14,8 @@ export default defineConfig({
             plugins: [pluginLineNumbers()],
             defaultProps: {
                 showLineNumbers: true,
-            }
+            },
+            themes: ["monokai"],
         }),
         mdx(),
         sitemap(),

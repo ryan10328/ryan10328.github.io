@@ -1,6 +1,6 @@
 ---
-title: "在 Astro Astrofy 樣板中實作具有記憶功能的 Theme Controller 功能"
-description: "本篇文章將透過實際步驟，介紹如何在 Astrofy 的 Astro Template 當中，實作 theme 的切換功能，並且將設定值保留到 localStorage 當中"
+title: "在 Astro Astrofy 樣板中實作 Theme Controller 功能"
+description: "本篇文章將介紹如何在 Astrofy Template 中實作 Theme Controller"
 pubDate: "May 18 2024"
 heroImage: "/post_img.webp"
 tags: [ "astro" ]

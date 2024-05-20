@@ -1,6 +1,6 @@
 ---
-title: "如何在 Astro 的 markdown code block 當中加入 line number"
-description: "本篇文章將透過詳細步驟，讓原本 Astro 中的 markdown code block 能夠支援行號"
+title: "如何在 Astro 的 markdown code block 中加入行號"
+description: "本篇文章將介紹如何使用 express code 讓 code block 支援行號"
 pubDate: "May 17 2024"
 heroImage: "/post_img.webp"
 tags: [ "astro" ]

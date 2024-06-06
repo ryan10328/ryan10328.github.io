@@ -8,7 +8,7 @@ import {pluginLineNumbers} from "@expressive-code/plugin-line-numbers";
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://blog.ryantseng.me',
+    site: 'https://blog.ryantseng.me/',
     integrations: [
         expressiveCode({
             plugins: [pluginLineNumbers()],

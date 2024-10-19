@@ -17,7 +17,7 @@
     "@astrojs/sitemap": "^3.1.5",
     "@astrojs/tailwind": "^5.1.0",
     "@expressive-code/plugin-line-numbers": "^0.35.3",
-    "astro": "^4.10.1",
+    "astro": "^4.16.6",
     "astro-expressive-code": "^0.35.3",
     "daisyui": "^4.4.10",
     "dayjs": "^1.11.9",

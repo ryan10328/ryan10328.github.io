@@ -44,17 +44,39 @@ const {
 </html>
 
 <script is:inline>
-    const themes = {dark: "dark", light: "cupcake"};
-    const sysColor = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const key = "theme";
+
+    const getColorPreference = () => {
+        let preference = localStorage.getItem(key);
+        if (!preference) {
+            preference = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        return preference;
+    };
+
+    const setPreference = (colorPreference, document) => {
+        localStorage.setItem(key, colorPreference);
+        document.querySelector("html").setAttribute("data-theme", getColorPreference() === "dark" ? "dark" : "cupcake");
+    };
+
+    const togglePreference = (document) => {
+        setPreference(getColorPreference() === "dark" ? "light" : "dark", document);
+    };
+
     if (typeof window !== "undefined") {
-        const controller = document.getElementById("theme-controller");
-        if (localStorage.getItem("theme") === null) localStorage.setItem("theme", sysColor);
-        document.querySelector("html").setAttribute("data-theme", themes[localStorage.getItem("theme")]);
-        if (localStorage.getItem("theme") === "light") controller.click();
-        controller.addEventListener("change", (e) => {
-            localStorage.setItem("theme", e.target.checked ? "light" : "dark");
-            document.querySelector("html").setAttribute("data-theme", themes[localStorage.getItem("theme")]);
-        });
+        setPreference(getColorPreference(), window.document);
     }
+
+    document.addEventListener("astro:before-swap", (event) => {
+        setPreference(getColorPreference(), event.newDocument);
+    });
+
+    document.addEventListener("astro:page-load", () => {
+        const controller = document.getElementById("theme-controller");
+        controller.addEventListener("change", (e) => {
+            // TODO: still a little bit buggy
+            togglePreference(window.document);
+        });
+    });
 </script>
 

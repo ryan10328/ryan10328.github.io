@@ -10,14 +10,17 @@ const {sideBarActiveItemID} = Astro.props;
     <label for="my-drawer" class="drawer-overlay"></label>
     <aside class="px-2 pt-2 h-auto min-h-full w-[19rem] bg-base-200 text-base-content flex flex-col">
         <div class="w-fit mx-auto my-5">
-            <label class="font-mono">{SITE_TITLE}</label>
+            <label class="font-mono">
+                <input type="text" class="hidden" name="site_title"/>
+                {SITE_TITLE}
+            </label>
         </div>
         <div class="w-fit mx-auto mt-5 mb-6">
             <a href="/">
                 <div class="avatar transition ease-in-out hover:scale-[105%] block m-auto">
                     <div class="w-[8.5rem]">
                         <Image class="mask mask-circle rounded-2xl" format="webp" width={300} height={300}
-                               src="/profile.webp" alt="Ryan Tseng"/>
+                               src="/profile.webp" alt="Ryan Tseng" loading="eager"/>
                     </div>
                 </div>
             </a>

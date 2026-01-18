@@ -17,9 +17,10 @@ const {sideBarActiveItemID} = Astro.props;
         </div>
         <div class="w-fit mx-auto mt-5 mb-6">
             <a href="/">
-                <div class="avatar transition ease-in-out hover:scale-[105%] block m-auto">
-                    <div class="w-[8.5rem]">
-                        <Image class="mask mask-circle rounded-2xl" format="webp" width={300} height={300}
+                <div id="avatar-container" class="avatar block m-auto relative w-[8.5rem] h-[8.5rem]">
+                    <div id="avatar-glow" class="absolute -inset-4 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none blur-lg"></div>
+                    <div class="w-full h-full relative z-10">
+                        <Image class="mask mask-circle rounded-2xl w-full h-full object-cover" format="webp" width={300} height={300}
                                src="/profile.webp" alt="Ryan Tseng" loading="eager"/>
                     </div>
                 </div>
@@ -29,3 +30,66 @@ const {sideBarActiveItemID} = Astro.props;
         <SideBarFooter/>
     </aside>
 </div>
+
+<script>
+    const avatarContainer = document.getElementById('avatar-container');
+    const avatarGlow = document.getElementById('avatar-glow');
+    
+    // 取得當前 theme
+    const getCurrentTheme = () => {
+        const theme = localStorage.getItem('theme');
+        if (theme) return theme;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    
+    // 根據 theme 設定光暈顏色
+    const getGlowColor = (x, y) => {
+        const isDark = getCurrentTheme() === 'dark';
+        
+        if (isDark) {
+            // Dark theme: 白色光暈
+            return `radial-gradient(circle 120px at ${x}px ${y}px, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5) 40%, transparent 70%)`;
+        } else {
+            // Light theme: 深色光暈
+            return `radial-gradient(circle 120px at ${x}px ${y}px, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.15) 40%, transparent 70%)`;
+        }
+    };
+    
+    const updateGlow = (e) => {
+        if (!avatarContainer || !avatarGlow) return;
+        
+        const rect = avatarContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        avatarGlow.style.background = getGlowColor(x, y);
+    };
+    
+    if (avatarContainer && avatarGlow) {
+        avatarContainer.addEventListener('mousemove', updateGlow);
+        
+        avatarContainer.addEventListener('mouseenter', () => {
+            avatarGlow.style.opacity = '1';
+        });
+        
+        avatarContainer.addEventListener('mouseleave', () => {
+            avatarGlow.style.opacity = '0';
+        });
+    }
+    
+    // 監聽 theme 切換事件（當使用者切換 theme 時更新光暈顏色）
+    document.addEventListener('astro:page-load', () => {
+        const themeController = document.getElementById('theme-controller');
+        if (themeController) {
+            themeController.addEventListener('change', () => {
+                // Theme 切換後，如果滑鼠還在 avatar 上，更新光暈顏色
+                if (avatarGlow && avatarGlow.style.opacity === '1') {
+                    const rect = avatarContainer.getBoundingClientRect();
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    avatarGlow.style.background = getGlowColor(centerX, centerY);
+                }
+            });
+        }
+    });
+</script>

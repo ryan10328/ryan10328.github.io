@@ -14,11 +14,29 @@ const {
     includeSidebar = true,
     sideBarActiveItemID,
     ogType,
+    pubDate,
+    updatedDate,
+    tags,
 } = Astro.props;
+
+// 只在非文章頁面加入網站結構化資料
+const websiteJsonLd = ogType !== 'article' ? {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": SITE_TITLE,
+    "description": SITE_DESCRIPTION,
+    "url": "https://blog.ryantseng.me/",
+    "author": {
+        "@type": "Person",
+        "name": "Ryan Tseng",
+        "url": "https://blog.ryantseng.me"
+    },
+    "inLanguage": "zh-TW"
+} : null;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="zh-TW" data-theme="dark">
     <head>
         <BaseHead
             title={title}
@@ -26,7 +44,11 @@ const {
             image={image}
             ,
             ogType={ogType}
+            pubDate={pubDate}
+            updatedDate={updatedDate}
+            tags={tags}
         />
+        {websiteJsonLd && <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />}
         {TRANSITION_API && <ClientRouter />}
     </head>
     <body>

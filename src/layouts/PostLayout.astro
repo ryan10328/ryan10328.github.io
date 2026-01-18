@@ -11,9 +11,45 @@ const {title, description, pubDate, updatedDate, heroImage, badge, tags = []} = 
 dayjs.extend(localizedFormat);
 const displayDate = dayjs(pubDate).format("ll")
 import {Image} from "astro:assets";
+import {SITE_TITLE} from "../config";
+
+// 準備結構化資料
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description,
+    "image": heroImage ? new URL(heroImage, Astro.url).href : new URL('/post_img.webp', Astro.url).href,
+    "datePublished": pubDate.toISOString(),
+    "dateModified": updatedDate ? new Date(updatedDate).toISOString() : pubDate.toISOString(),
+    "author": {
+        "@type": "Person",
+        "name": "Ryan Tseng",
+        "url": "https://blog.ryantseng.me"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": SITE_TITLE,
+        "logo": {
+            "@type": "ImageObject",
+            "url": new URL('/profile.webp', Astro.url).href
+        }
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": Astro.url.href
+    }
+};
+
+if (tags && tags.length > 0) {
+    jsonLd["keywords"] = tags.join(", ");
+}
 ---
 
-<BaseLayout title={title} description={description} image={heroImage} ogType="article">
+<BaseLayout title={title} description={description} image={heroImage} ogType="article" pubDate={pubDate} updatedDate={updatedDate} tags={tags}>
+    <!-- JSON-LD 結構化資料 -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
     <main class="md:flex md:justify-center">
         <article class="prose prose-lg max-w-[850px] prose-img:mx-auto">
             {heroImage &&

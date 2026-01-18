@@ -32,9 +32,6 @@ const {sideBarActiveItemID} = Astro.props;
 </div>
 
 <script>
-    const avatarContainer = document.getElementById('avatar-container');
-    const avatarGlow = document.getElementById('avatar-glow');
-    
     // 取得當前 theme
     const getCurrentTheme = () => {
         const theme = localStorage.getItem('theme');
@@ -55,17 +52,21 @@ const {sideBarActiveItemID} = Astro.props;
         }
     };
     
-    const updateGlow = (e) => {
+    // 初始化光暈效果
+    const initAvatarGlow = () => {
+        const avatarContainer = document.getElementById('avatar-container');
+        const avatarGlow = document.getElementById('avatar-glow');
+        
         if (!avatarContainer || !avatarGlow) return;
         
-        const rect = avatarContainer.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const updateGlow = (e) => {
+            const rect = avatarContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            avatarGlow.style.background = getGlowColor(x, y);
+        };
         
-        avatarGlow.style.background = getGlowColor(x, y);
-    };
-    
-    if (avatarContainer && avatarGlow) {
         avatarContainer.addEventListener('mousemove', updateGlow);
         
         avatarContainer.addEventListener('mouseenter', () => {
@@ -75,10 +76,8 @@ const {sideBarActiveItemID} = Astro.props;
         avatarContainer.addEventListener('mouseleave', () => {
             avatarGlow.style.opacity = '0';
         });
-    }
-    
-    // 監聽 theme 切換事件（當使用者切換 theme 時更新光暈顏色）
-    document.addEventListener('astro:page-load', () => {
+        
+        // 監聽 theme 切換事件
         const themeController = document.getElementById('theme-controller');
         if (themeController) {
             themeController.addEventListener('change', () => {
@@ -91,5 +90,8 @@ const {sideBarActiveItemID} = Astro.props;
                 }
             });
         }
-    });
+    };
+    
+    // 在頁面載入時初始化
+    document.addEventListener('astro:page-load', initAvatarGlow);
 </script>

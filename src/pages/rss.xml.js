@@ -8,11 +8,14 @@ export async function GET(context) {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     site: import.meta.env.SITE,
+    language: 'zh-TW',
     items: blog.map((post) => ({
       title: post.data.title,
       pubDate: post.data.pubDate,
       description: post.data.description,
       link: `/blog/${post.slug}/`,
+      categories: post.data.tags || [],
+      author: 'Ryan Tseng',
     })),
   });
 }

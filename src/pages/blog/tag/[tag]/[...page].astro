@@ -6,9 +6,9 @@ import createSlug from "../../../../lib/createSlug";
 
 export async function getStaticPaths({paginate}) {
     const all_posts = await getCollection("blog");
-    const all_tags = all_posts.flatMap((post) => {
-        return post.data.tags || [];
-    });
+    const all_tags = [
+        ...new Set(all_posts.flatMap((post) => post.data.tags || [])),
+    ];
 
     return all_tags.flatMap((tag) => {
         const filtred_posts = all_posts.filter((post) => {
@@ -43,7 +43,7 @@ const params = Astro.params;
                                         title={post.data.title}
                                         img={post.data.heroImage}
                                         desc={post.data.description}
-                                        url={"/blog/" + createSlug(post.data.enTitle || post.data.title, post.slug)}
+                                        url={"/blog/" + createSlug(post.data.enTitle || post.data.title, post.id)}
                                         target="_self"
                                         badge={post.data.badge}
                                         tags={post.data.tags}
